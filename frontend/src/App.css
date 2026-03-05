@@ -1,0 +1,290 @@
+body {
+  background-color: #121212;
+  color: #e0e0e0;
+  font-family: 'Roboto', 'Segoe UI', sans-serif;
+  margin: 0;
+  overflow-y: scroll;
+}
+
+.App {
+  text-align: center;
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* --- Header & Controls --- */
+.header {
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #333;
+}
+
+h1 {
+  background: linear-gradient(90deg, #4facfe, #00f2fe);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 20px;
+}
+
+.controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  background: #1e1e2e;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+button {
+  background: linear-gradient(90deg, #4facfe, #00f2fe);
+  border: none;
+  padding: 10px 25px;
+  border-radius: 25px;
+  color: #fff;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px rgba(0, 242, 254, 0.5);
+}
+
+button:disabled {
+  background: #555;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.eve-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 15px;
+  border-radius: 20px;
+  border: 1px solid #444;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.eve-toggle.active {
+  background: rgba(255, 71, 87, 0.2);
+  border-color: #ff4757;
+  color: #ff4757;
+  animation: pulse-red 2s infinite;
+}
+
+/* --- Layout Lanes --- */
+.simulation-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.lane {
+  background: #1e1e2e;
+  border-radius: 10px;
+  padding: 15px;
+  opacity: 0; /* Hidden by default */
+  transform: translateY(20px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.lane.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.lane h3 {
+  margin: 0 0 15px 0;
+  font-size: 1rem;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* --- Bit Boxes --- */
+.bit-row {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 8px;
+  height: 35px;
+  align-items: center;
+}
+
+.label {
+  width: 60px;
+  text-align: right;
+  margin-right: 15px;
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.bit-box {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 3px;
+  border-radius: 5px;
+  background: #2a2a40;
+  border: 1px solid #444;
+  font-family: monospace;
+  font-weight: bold;
+
+  /* Start hidden for pop-in animation */
+  opacity: 0;
+  transform: scale(0);
+}
+
+.base-box { color: #ffd700; }
+
+/* --- Animations Classes --- */
+.pop-in {
+  animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes popIn {
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* --- Channel Animation (The fun part) --- */
+.channel-lane {
+  background: transparent;
+  min-height: 80px;
+  position: relative;
+  overflow: visible;
+}
+
+.flying-photon {
+  position: absolute;
+  top: 0;
+  font-size: 1.5rem;
+  color: #00f2fe;
+  opacity: 0;
+  animation: flyDown 4s ease-in-out forwards;
+  z-index: 10;
+}
+
+.flying-photon.intercepted {
+  color: #ff4757;
+  text-shadow: 0 0 5px #ff4757;
+}
+
+@keyframes flyDown {
+  0% { transform: translateY(-50px); opacity: 0; }
+  20% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { transform: translateY(80px); opacity: 0; }
+}
+
+.channel-status {
+  text-align: center;
+  font-weight: bold;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.channel-status.safe { color: #2ed573; }
+.channel-status.danger { color: #ff4757; animation: shake 0.5s infinite; }
+
+/* --- Sifting Animation --- */
+.match-anim {
+  background: rgba(46, 213, 115, 0.2);
+  border-color: #2ed573;
+  animation: popIn 0.5s forwards;
+}
+
+.mismatch-anim {
+  background: rgba(255, 71, 87, 0.1);
+  border-color: #ff4757;
+  opacity: 0.3;
+  animation: fadeOut 0.5s forwards 1s; /* Delay fading out */
+}
+
+@keyframes fadeOut {
+  to { opacity: 0.1; filter: grayscale(100%); }
+}
+
+.final-key-section {
+  margin-top: 20px;
+  opacity: 0;
+  animation: slideUp 0.5s ease forwards 1.5s; /* Wait for checks to finish */
+}
+
+@keyframes slideUp {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.key-display {
+  background: #000;
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid #333;
+  min-height: 30px;
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+}
+
+.key-bit {
+  color: #2ed573;
+  font-size: 1.2rem;
+  font-weight: bold;
+  opacity: 0;
+  animation: dropIn 0.3s ease forwards;
+}
+
+@keyframes dropIn {
+  0% { transform: translateY(-20px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-2px); }
+  75% { transform: translateX(2px); }
+  100% { transform: translateX(0); }
+}
+
+@keyframes pulse-red {
+  0% { box-shadow: 0 0 0 0 rgba(255, 71, 87, 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(255, 71, 87, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 71, 87, 0); }
+}
+
+.safe-text { color: #2ed573; font-weight: bold; }
+.danger-text { color: #ff4757; font-weight: bold; }
+
+.security-report {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 15px;
+  display: flex;
+  justify-content: space-around;
+  border: 1px solid #444;
+}
+
+.secure-key {
+  border-color: #2ed573;
+  box-shadow: 0 0 10px rgba(46, 213, 115, 0.2);
+}
+
+/* The "Destroyed Key" Look */
+.hacked-alert {
+  animation: shake 0.5s;
+}
+
+.destroyed-key {
+  background: #3a0000;
+  color: #ff4757;
+  text-decoration: line-through;
+  border-color: #ff4757;
+  opacity: 0.7;
+}
